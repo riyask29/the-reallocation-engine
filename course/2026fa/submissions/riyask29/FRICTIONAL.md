@@ -159,5 +159,5 @@ estimates.
 | typo miss (15) | WORKED-RUN *Verification §3* |
 | runs 2–3, gate decisions (18–21) | `logs/runs/2026fa-riyask29-2.md`; `runs/run-2-student/`; `inputs/liveness.gate-cleared.json`; `config/title-families.json` `_changelog` |
 | CI baseline (17) | GitHub Actions run 35913366020 on `nikbearbrown/the-reallocation-engine` |
-| commits | **(added in step 8: commit SHA and PR link)** |
+| commits | `398ccd7` (all work, tested from a clean clone, TEST-REPORT §9); later commits on the same branch only add the clean-clone results and the PR link (`git log origin/main..HEAD`) |
 | AI session | Claude Code session on 2026-10-02 in the student's terminal (transcript available on request) |

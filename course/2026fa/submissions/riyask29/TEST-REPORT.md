@@ -19,11 +19,10 @@ this pull request is not misread.
 - **Who ran it:** Claude (AI assistant), at riyask29's direction, in the student's
   terminal session. riyask29 re-runs the commands below before
   submission (see *Not yet done*).
-- **"Clean checkout":** nothing was committed when this report was written.
-  The clean run used a fresh `git clone` of the fork's `main` with only this
-  branch's 27 new files copied in, `out/` deleted, and `npm install` run fresh.
-  It will be repeated from a real clone of the pushed branch in step 8, and this
-  section will be updated with the commit SHA.
+- **"Clean checkout":** first done before any commit (a fresh clone with the new
+  files copied in, sections 1–5). **Repeated from a real clone of commit
+  `398ccd7`** (`git clone -b contrib/2026fa-riyask29-data-analyst-sponsor-boston`,
+  fresh `npm install`); see section 9.
 
 ## 1. Toolchain baseline: before and after
 
@@ -122,19 +121,24 @@ on the HubSpot lead, the G1 test exits **1**.
 
 ## 6. Paths changed
 
-Nothing is committed yet, so `git diff --stat` is empty. This is the
-untracked-file list, every path in my three namespaces:
+From the clean clone of commit `398ccd7`:
 
 ```
-$ git status --short
-?? course/2026fa/
-?? recipes/cases/2026fa/
-?? scripts/contrib/2026fa/riyask29-data-analyst-sponsor-boston/
+$ git diff --stat origin/main...HEAD | tail -1
+ 48 files changed, 5600 insertions(+)
+
+$ git diff --name-only origin/main...HEAD   (grouped by namespace)
+  22 course/2026fa/submissions/riyask29/
+   2 logs/runs/                               (2026fa-riyask29-1.md, 2026fa-riyask29-2.md)
+   2 recipes/cases/2026fa/                    (riyask29-data-analyst-sponsor-boston.md, .card.md)
+  22 scripts/contrib/2026fa/riyask29-data-analyst-sponsor-boston/
 ```
 
-`package-lock.json` is changed by `npm install`; it was reverted
-(`git checkout -- package-lock.json`) and is not part of this branch. The real
-`git diff --stat main...HEAD` goes here after the commit in step 8.
+Insertions only, with no file outside these four namespaces and no protected
+path (checked against the `contrib-scope` rules in
+`.github/workflows/contrib-gate.yml`). `package-lock.json` is changed by
+`npm install`; it was reverted (`git checkout -- package-lock.json`) and is not
+part of this branch.
 
 ## 7. What a human must judge (the gates)
 
@@ -184,10 +188,22 @@ Upstream `main`'s own **Contrib Gate** run for its latest commit
 show `action_required` until the maintainer approves the workflow run. A red
 or pending check on this PR should be compared with that baseline.
 
-## Not yet done
+## 9. Clean clone of the committed branch (commit `398ccd7`)
 
-- Re-running every command above from a real clone of the **pushed** branch,
-  by riyask29, with the commit SHA recorded (step 8).
-- `node scripts/pii-scan.mjs --diff origin/main` (the history scan CI runs on
-  PRs) needs commits to scan, so it runs in step 8.
-- A human clearing G1–G4 and signing the run-log entry.
+| Check | Result |
+|---|---|
+| `npm run doctor` | exit 0 · `environment: ✓ runnable` |
+| `npm run verify` | exit 0 · `conformance: 180 files … ✓ all conform` · `manifest check passed (3 warnings)` |
+| `node --test …/analyst_check.test.mjs` | pass 8, fail 0 |
+| `node scripts/pii-scan.mjs` (working tree) | exit 1, only the upstream `package-lock.json` finding (§1) |
+| `node scripts/pii-scan.mjs --diff origin/main` (full branch history, as CI runs it on PRs) | **`pii-scan: clean ✓`**, exit 0 |
+| run 3 reproduced: `node …/analyst_check.mjs --liveness-file …/inputs/liveness.gate-cleared.json --today 2026-10-02 --out-dir <tmp>` | `analyst-check-report.md`, `role-scores.md`, `roles.json`, `scorer-profile.json` **byte-identical** to the committed `out/`; `analyst-check-log.json` roles identical |
+
+My first attempt at the history scan in the clone used `--diff main` and failed
+with `fatal: ambiguous argument 'main..HEAD'`: a fresh single-branch clone has
+`origin/main`, not `main`. Re-run with `origin/main` → clean.
+
+## Not done
+
+- A live-liveness run from the clean clone (liveness is not repeatable anyway; see §7b).
+- Writer and HubSpot sponsorship research outside this dataset (G1 decision: research by hand).
