@@ -188,6 +188,17 @@ Upstream `main`'s own **Contrib Gate** run for its latest commit
 show `action_required` until the maintainer approves the workflow run. A red
 or pending check on this PR should be compared with that baseline.
 
+Why each job fails on `main`:
+- **`harness-regression`**: 4 of the 6 scripts that `.github/workflows/contrib-gate.yml`
+  runs do not exist in the repository: `scripts/test/gate-behavior-harness.mjs`,
+  `scripts/test/fuzz-invariants.mjs`, `scripts/gates/gate-behavior-harness.mjs` and
+  `scripts/score/scorer-harness.mjs` (checked with `test -f` on 2026-10-02;
+  `scripts/score/gate-behavior-harness.mjs` and `scripts/score/gate-harness.mjs`
+  do exist). This was first pointed out in a classmate's PR comment (#6) and
+  verified here.
+- **`doctor-and-pii`**: the working-tree `pii-scan` step exits 1 on the
+  `package-lock.json` finding (section 1).
+
 ## 9. Clean clone of the committed branch (commit `398ccd7`)
 
 | Check | Result |
